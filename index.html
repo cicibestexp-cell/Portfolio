@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sign Up — Verify ID</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent-glow: rgba(108,99,255,0.3);
+    --text: #f0f0fa;
+    --muted: #7070a0;
+    --success: #22d3a5;
+    --error: #ff4d6d;
+    --warn: #f59e0b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(108,99,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 80% 90%, rgba(255,107,157,0.08) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .container { width: 100%; max-width: 480px; padding: 24px 20px 48px; position: relative; z-index: 1; }
+  .brand { text-align: center; margin-bottom: 36px; }
+  .brand-logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .brand-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .brand-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.5px; }
+  .steps { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--muted); transition: all 0.4s ease; position: relative;
+  }
+  .step-dot.active { border-color: var(--accent); background: var(--accent); color: white; box-shadow: 0 0 16px var(--accent-glow); }
+  .step-dot.done { border-color: var(--success); background: var(--success); color: white; }
+  .step-dot.done::after { content: '✓'; }
+  .step-dot.done span { display: none; }
+  .step-line { width: 60px; height: 2px; background: var(--border); transition: background 0.4s ease; }
+  .step-line.done { background: var(--success); }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px 28px; position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 20px 20px 0 0;
+  }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; font-weight: 300; line-height: 1.5; }
+  .field { margin-bottom: 16px; }
+  label {
+    display: block; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
+  }
+  input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none;
+  }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  input::placeholder { color: var(--muted); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn {
+    width: 100%; padding: 15px; border-radius: 12px; border: none;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.25s ease; letter-spacing: 0.02em; margin-top: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #8b82ff); color: white; box-shadow: 0 4px 20px var(--accent-glow); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--accent-glow); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); margin-top: 10px; }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  /* CAMERA */
+  .camera-wrap {
+    position: relative; width: 100%; aspect-ratio: 4/3;
+    background: #000; border-radius: 14px; overflow: hidden;
+    margin-bottom: 16px; border: 2px solid var(--border); transition: border-color 0.3s;
+  }
+  .camera-wrap.pass { border-color: var(--success); }
+  #videoEl { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .id-frame {
+    width: 85%; height: 60%;
+    border: 2.5px solid rgba(108,99,255,0.8); border-radius: 10px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.45), inset 0 0 20px rgba(108,99,255,0.1);
+    position: relative; transition: border-color 0.3s;
+  }
+  .id-frame.pass { border-color: rgba(34,211,165,0.9); }
+  .id-frame::before, .id-frame::after, .corner1, .corner2 {
+    content: ''; position: absolute; width: 20px; height: 20px;
+    border-color: var(--accent); border-style: solid; transition: border-color 0.3s;
+  }
+  .id-frame.pass::before, .id-frame.pass::after { border-color: var(--success); }
+  .id-frame::before { top:-3px; left:-3px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+  .id-frame::after  { top:-3px; right:-3px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+  .corner1 { bottom:-3px; left:-3px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+  .corner2 { bottom:-3px; right:-3px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+  .id-frame.pass .corner1, .id-frame.pass .corner2 { border-color: var(--success); }
+  .scan-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent), transparent);
+    animation: scanAnim 2s ease-in-out infinite; top: 0; opacity: 0;
+  }
+  .scan-line.active { opacity: 1; }
+  @keyframes scanAnim { 0%{top:5%} 50%{top:90%} 100%{top:5%} }
+
+  /* LIVENESS */
+  .liveness-wrap { margin-bottom: 14px; display: none; }
+  .liveness-wrap.show { display: block; }
+  .liveness-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .liveness-label .pct { color: var(--accent); font-weight: 600; }
+  .liveness-track { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .liveness-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--success)); border-radius: 99px; transition: width 0.2s ease; }
+
+  /* CHECK PILLS */
+  .checks-row { display: none; gap: 8px; margin-bottom: 14px; }
+  .checks-row.show { display: flex; }
+  .check-pill {
+    flex: 1; padding: 7px 4px; border-radius: 8px; text-align: center;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    border: 1px solid var(--border); color: var(--muted); background: var(--surface2); transition: all 0.3s;
+  }
+  .check-pill.pass { border-color: rgba(34,211,165,0.5); color: var(--success); background: rgba(34,211,165,0.08); }
+  .check-pill.fail { border-color: rgba(255,77,109,0.5); color: var(--error); background: rgba(255,77,109,0.08); }
+  .check-pill.checking { border-color: rgba(108,99,255,0.4); color: var(--accent); background: rgba(108,99,255,0.08); animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* STATUS */
+  .status-box { border-radius: 10px; padding: 12px 16px; font-size: 13px; display: none; align-items: flex-start; gap: 10px; margin-top: 12px; }
+  .status-box.show { display: flex; }
+  .status-box.info    { background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.3); color: #a099ff; }
+  .status-box.success { background: rgba(34,211,165,0.1);  border: 1px solid rgba(34,211,165,0.3); color: var(--success); }
+  .status-box.error   { background: rgba(255,77,109,0.1);  border: 1px solid rgba(255,77,109,0.3); color: var(--error); }
+  .status-box.warn    { background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.3); color: var(--warn); }
+  .status-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* PROGRESS */
+  .progress-wrap { width: 100%; height: 4px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-top: 14px; display: none; }
+  .progress-wrap.show { display: block; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.3s ease; width: 0%; }
+
+  /* SUCCESS */
+  .success-screen { text-align: center; padding: 16px 0; }
+  .success-icon {
+    width: 72px; height: 72px; background: rgba(34,211,165,0.15); border: 2px solid var(--success);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin: 0 auto 20px; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+  .success-screen h2 { font-family:'Syne',sans-serif; font-size:24px; font-weight:800; margin-bottom:8px; color:var(--success); }
+  .success-screen p { color:var(--muted); font-size:14px; max-width:280px; margin:0 auto; font-weight:300; line-height:1.6; }
+  .matched-name {
+    background: rgba(34,211,165,0.1); border: 1px solid rgba(34,211,165,0.2);
+    border-radius: 10px; padding: 12px 20px;
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px;
+    color: var(--success); margin: 20px auto; max-width: 300px;
+  }
+  #capturePreview { display:none; width:100%; border-radius:14px; margin-bottom:14px; border:2px solid var(--border); }
+  .hint-text { text-align:center; font-size:13px; color:var(--muted); margin-bottom:14px; font-weight:300; }
+  canvas { display: none; }
+  @media (max-width:400px) {
+    .card { padding:24px 18px; }
+    .row2 { grid-template-columns:1fr; gap:0; }
+    .step-line { width:40px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand">
+    <div class="brand-logo">
+      <div class="brand-icon">⬡</div>
+      <span class="brand-name">Verify.io</span>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-dot active" id="sd1"><span>1</span></div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step-dot" id="sd2"><span>2</span></div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step-dot" id="sd3"><span>3</span></div>
+  </div>
+
+  <!-- STEP 1: Form -->
+  <div class="step-panel active" id="step1">
+    <div class="card">
+      <div class="card-title">Create account</div>
+      <div class="card-sub">Fill in your details to get started.</div>
+      <div class="row2">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="Juan" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Dela Cruz" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field">
+        <label>Middle Name <span style="color:var(--muted);text-transform:none;font-size:11px;">(optional)</span></label>
+        <input type="text" id="middleName" placeholder="Santos" autocomplete="additional-name">
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="juan@example.com" autocomplete="email">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label>Confirm</label>
+          <input type="password" id="confirmPass" placeholder="••••••••" autocomplete="new-password">
+        </div>
+      </div>
+      <div id="formError" class="status-box error">
+        <span class="status-icon">⚠️</span>
+        <span id="formErrorMsg">Please fill in all required fields.</span>
+      </div>
+      <button class="btn btn-primary" onclick="goToStep2()">Next — Verify ID →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Camera + Checks -->
+  <div class="step-panel" id="step2">
+    <div class="card">
+      <div class="card-title">Verify your ID</div>
+      <div class="card-sub">Hold your <strong>physical government-issued ID</strong> inside the frame and slowly move it left and right.</div>
+
+      <div class="liveness-wrap show" id="livenessWrap">
+        <div class="liveness-label">
+          <span>🔄 Slowly move the ID side to side</span>
+          <span class="pct" id="livenessPct">0%</span>
+        </div>
+        <div class="liveness-track">
+          <div class="liveness-fill" id="livenessFill"></div>
+        </div>
+      </div>
+
+      <div class="camera-wrap" id="cameraWrap">
+        <video id="videoEl" autoplay playsinline muted></video>
+        <div class="camera-overlay">
+          <div class="id-frame" id="idFrame">
+            <div class="corner1"></div>
+            <div class="corner2"></div>
+            <div class="scan-line" id="scanLine"></div>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="snapCanvas"></canvas>
+      <canvas id="analyzeCanvas"></canvas>
+      <img id="capturePreview" alt="Captured ID">
+
+      <div class="checks-row" id="checksRow">
+        <div class="check-pill" id="checkMotion">🔄 Motion</div>
+        <div class="check-pill" id="checkGlare">✨ Glare</div>
+        <div class="check-pill" id="checkScreen">🖥 Screen</div>
+        <div class="check-pill" id="checkOCR">📄 Text</div>
+      </div>
+
+      <p class="hint-text">Ensure the ID is well-lit and your full name is clearly visible.</p>
+
+      <div id="scanStatus" class="status-box info show">
+        <span class="status-icon">📷</span>
+        <span id="scanStatusMsg">Camera starting… move the ID slowly <strong>left and right</strong> to prove it's a real card.</span>
+      </div>
+
+      <div class="progress-wrap" id="ocrProgress">
+        <div class="progress-bar" id="ocrBar"></div>
+      </div>
+
+      <button class="btn btn-primary" id="captureBtn" onclick="captureAndScan()" disabled>📸 Capture &amp; Scan</button>
+      <button class="btn btn-outline" onclick="retryCapture()" id="retryBtn" style="display:none;">↩ Retake Photo</button>
+      <button class="btn btn-outline" onclick="goBack()">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Success -->
+  <div class="step-panel" id="step3">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>You're verified!</h2>
+        <p>Your identity has been confirmed. Your account has been successfully created.</p>
+        <div class="matched-name" id="matchedNameDisplay"></div>
+        <p style="margin-top:4px;">Welcome aboard 🎉</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+// ─────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────
+let stream = null, capturedImageData = null, userData = {};
+let livenessScore = 0, livenessReady = false;
+let motionFrames = [], liveInterval = null;
+const LIVENESS_NEEDED = 100;
+
+// ─────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────
+function normalize(s) {
+  return s.toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
+}
+function tokenize(s) { return normalize(s).split(' ').filter(t=>t.length>1); }
+function levenshtein(a,b) {
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function delay(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function $(id) { return document.getElementById(id); }
+
+function showFormError(msg) { $('formErrorMsg').textContent=msg; $('formError').classList.add('show'); }
+function hideFormError() { $('formError').classList.remove('show'); }
+
+function setScanStatus(type,icon,msg) {
+  const box=$('scanStatus');
+  box.className='status-box show '+type;
+  box.querySelector('.status-icon').textContent=icon;
+  $('scanStatusMsg').innerHTML=msg;
+}
+function setProgress(pct) {
+  $('ocrProgress').classList.toggle('show',pct>0&&pct<100);
+  $('ocrBar').style.width=pct+'%';
+}
+function setPill(id,state,label) {
+  const el=$(id); el.className='check-pill '+state; if(label) el.textContent=label;
+}
+function setStep(n) {
+  [1,2,3].forEach(i=>{
+    $('step'+i).classList.toggle('active',i===n);
+    const d=$('sd'+i); d.classList.remove('active','done');
+    if(i<n) d.classList.add('done');
+    if(i===n) d.classList.add('active');
+  });
+  [1,2].forEach(i=>$('sl'+i).classList.toggle('done',i<n));
+}
+
+// ─────────────────────────────────────────────────────
+// STEP 1 → 2
+// ─────────────────────────────────────────────────────
+function goToStep2() {
+  hideFormError();
+  const fn=$('firstName').value.trim(), ln=$('lastName').value.trim(),
+        mn=$('middleName').value.trim(), em=$('email').value.trim(),
+        pw=$('password').value, cp=$('confirmPass').value;
+  if(!fn||!ln) return showFormError('First name and last name are required.');
+  if(!em||!/\S+@\S+\.\S+/.test(em)) return showFormError('Please enter a valid email address.');
+  if(pw.length<8) return showFormError('Password must be at least 8 characters.');
+  if(pw!==cp) return showFormError('Passwords do not match.');
+  userData={firstName:fn,middleName:mn,lastName:ln,email:em};
+  setStep(2); startCamera();
+}
+function goBack() { stopEverything(); setStep(1); resetScanUI(); }
+
+// ─────────────────────────────────────────────────────
+// CAMERA
+// ─────────────────────────────────────────────────────
+async function startCamera() {
+  resetScanUI();
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}
+    });
+    const vid=$('videoEl'); vid.srcObject=stream;
+    await new Promise(r=>{ vid.onloadedmetadata=r; });
+    setScanStatus('info','📷','Camera ready — slowly move the ID <strong>left and right</strong> inside the frame.');
+    startLivenessLoop();
+  } catch(e) {
+    setScanStatus('error','❌','Camera access denied. Please allow camera access and refresh.');
+    $('captureBtn').disabled=true;
+  }
+}
+function stopEverything() {
+  stopLivenessLoop();
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+}
+function resetScanUI() {
+  capturedImageData=null; livenessScore=0; livenessReady=false; motionFrames=[];
+  $('capturePreview').style.display='none';
+  $('cameraWrap').style.display='block';
+  $('captureBtn').style.display='block';
+  $('captureBtn').disabled=true;
+  $('captureBtn').innerHTML='📸 Capture &amp; Scan';
+  $('retryBtn').style.display='none';
+  $('scanLine').classList.remove('active');
+  $('idFrame').className='id-frame';
+  $('cameraWrap').className='camera-wrap';
+  $('checksRow').classList.remove('show');
+  $('livenessWrap').classList.add('show');
+  setLivenessUI(0); setProgress(0);
+}
+function retryCapture() {
+  resetScanUI();
+  setScanStatus('info','📷','Camera ready — slowly move the ID <strong>left and right</strong>.');
+  if(!stream) startCamera(); else startLivenessLoop();
+}
+
+// ─────────────────────────────────────────────────────
+// LIVENESS LOOP
+// Samples camera frames, computes horizontal brightness centroid.
+// A real physical card being moved will shift the centroid.
+// A flat printed sheet or screen held still won't accumulate enough range.
+// ─────────────────────────────────────────────────────
+function startLivenessLoop() {
+  stopLivenessLoop();
+  const video=$('videoEl'), canvas=$('analyzeCanvas'), ctx=canvas.getContext('2d');
+  const W=80, H=60;
+  canvas.width=W; canvas.height=H;
+
+  liveInterval = setInterval(()=>{
+    if(!stream||video.readyState<2) return;
+    ctx.drawImage(video,0,0,W,H);
+    const frame=ctx.getImageData(0,0,W,H);
+    const d=frame.data;
+    let sumX=0, sumBright=0;
+    for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+      const i=(y*W+x)*4;
+      const lum=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+      sumX+=x*lum; sumBright+=lum;
+    }
+    const centroidX = sumBright>0 ? sumX/sumBright : W/2;
+    motionFrames.push(centroidX);
+    if(motionFrames.length>30) motionFrames.shift();
+    if(motionFrames.length>=8){
+      const mn2=Math.min(...motionFrames), mx2=Math.max(...motionFrames);
+      const range=mx2-mn2;
+      const needed=W*0.12; // 12% of frame width
+      const motionPct=Math.min(100,(range/needed)*100);
+      livenessScore=Math.max(livenessScore,motionPct);
+    }
+    livenessScore=Math.min(100,livenessScore);
+    setLivenessUI(livenessScore);
+    if(livenessScore>=LIVENESS_NEEDED&&!livenessReady){
+      livenessReady=true;
+      stopLivenessLoop();
+      $('captureBtn').disabled=false;
+      $('idFrame').classList.add('pass');
+      $('cameraWrap').classList.add('pass');
+      setScanStatus('success','✅','Motion verified! Now <strong>hold the ID still</strong> and tap Capture & Scan.');
+      $('livenessWrap').classList.remove('show');
+    }
+  },120);
+}
+function stopLivenessLoop(){ if(liveInterval){clearInterval(liveInterval);liveInterval=null;} }
+function setLivenessUI(pct){
+  $('livenessFill').style.width=pct+'%';
+  $('livenessPct').textContent=Math.round(pct)+'%';
+}
+
+// ─────────────────────────────────────────────────────
+// CAPTURE → CHECKS → OCR
+// ─────────────────────────────────────────────────────
+async function captureAndScan() {
+  if(!livenessReady) return;
+  const video=$('videoEl'), canvas=$('snapCanvas');
+  canvas.width=video.videoWidth||1280;
+  canvas.height=video.videoHeight||720;
+  canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+  capturedImageData=canvas.toDataURL('image/jpeg',0.95);
+
+  $('capturePreview').src=capturedImageData;
+  $('capturePreview').style.display='block';
+  $('cameraWrap').style.display='none';
+  $('captureBtn').style.display='none';
+  $('retryBtn').style.display='block';
+  $('livenessWrap').classList.remove('show');
+  $('checksRow').classList.add('show');
+  $('scanLine').classList.add('active');
+  stopEverything();
+
+  setScanStatus('info','🔬','Running physical ID checks…');
+  setProgress(5);
+
+  // Pill states
+  setPill('checkMotion','pass','✅ Motion');
+  setPill('checkGlare','checking','⏳ Glare');
+  setPill('checkScreen','checking','⏳ Screen');
+  setPill('checkOCR','checking','⏳ Text');
+
+  await delay(300);
+  const pixels = getPixelData(canvas);
+
+  // 1. GLARE CHECK
+  const glare = checkGlare(pixels);
+  setPill('checkGlare', glare.pass?'pass':'fail', glare.pass?'✅ Glare':'❌ Glare');
+  await delay(280);
+
+  // 2. SCREEN-GLOW CHECK
+  const screen = checkScreenGlow(pixels);
+  setPill('checkScreen', screen.pass?'pass':'fail', screen.pass?'✅ No Screen':'❌ Screen?');
+  await delay(280);
+
+  // Hard fail: looks like a screen
+  if(screen.fail_hard) {
+    setProgress(0);
+    setScanStatus('error','❌','<strong>Screen detected.</strong> You appear to be showing a phone or monitor. Please use a physical ID card.');
+    setPill('checkOCR','fail','— Text');
+    return;
+  }
+
+  // Soft fail: both glare and screen checks suggest not a real card
+  if(!glare.pass && !screen.pass) {
+    setProgress(0);
+    setScanStatus('error','❌','This does not appear to be a physical ID card. Please use an official government-issued ID.');
+    setPill('checkOCR','fail','— Text');
+    return;
+  }
+
+  setScanStatus('info','🔍','Anti-spoof checks passed — reading ID text…');
+  setPill('checkOCR','checking','⏳ Text');
+
+  // 3. OCR
+  try {
+    const result = await Tesseract.recognize(capturedImageData, 'eng', {
+      logger: m => {
+        if(m.status==='recognizing text') setProgress(Math.round(m.progress*80)+15);
+      }
+    });
+    setProgress(100);
+    setTimeout(()=>setProgress(0),600);
+    setPill('checkOCR','pass','✅ Text');
+    console.log('OCR output:', result.data.text);
+    processOcrResult(result.data.text);
+  } catch(err) {
+    console.error(err);
+    setPill('checkOCR','fail','❌ Text');
+    setScanStatus('error','❌','OCR failed. Please retake the photo and try again.');
+    setProgress(0);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// ANTI-SPOOF: GLARE
+// Real PVC cards have small specular highlights (bright near-white pixels)
+// that cover a small but nonzero area. Pure prints = 0. Screens = too uniform.
+// ─────────────────────────────────────────────────────
+function checkGlare(data) {
+  let hotPx=0, total=data.length/4;
+  for(let i=0;i<data.length;i+=16){
+    const r=data[i],g=data[i+1],b=data[i+2];
+    const lum=0.299*r+0.587*g+0.114*b;
+    if(lum>242 && Math.abs(r-g)<18 && Math.abs(g-b)<18) hotPx++;
+  }
+  const hotRatio=hotPx/(total/4);
+  // Real card: 0.002–0.10  |  Paper print: ~0  |  Screen: unpredictable but usually 0 or very high
+  const pass = hotRatio>0.0008 && hotRatio<0.13;
+  console.log('Glare hotRatio:', hotRatio.toFixed(4), '→', pass?'PASS':'FAIL');
+  return {pass, hotRatio};
+}
+
+// ─────────────────────────────────────────────────────
+// ANTI-SPOOF: SCREEN GLOW
+// Screens emit backlight → very high mean brightness + very low variance.
+// A physical card under normal lighting has more brightness variation.
+// ─────────────────────────────────────────────────────
+function checkScreenGlow(data) {
+  // Center crop: roughly middle 50% of the 320x240 downsampled image
+  const W=320,H=240;
+  const x0=Math.floor(W*0.25),x1=Math.floor(W*0.75);
+  const y0=Math.floor(H*0.25),y1=Math.floor(H*0.75);
+  let sum=0,count=0,lums=[];
+  for(let y=y0;y<y1;y+=3) for(let x=x0;x<x1;x+=3){
+    const i=(y*W+x)*4;
+    const lum=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+    sum+=lum; count++; lums.push(lum);
+  }
+  const mean=sum/count;
+  let varSum=0;
+  for(const l of lums) varSum+=(l-mean)**2;
+  const stdDev=Math.sqrt(varSum/lums.length);
+  // Screen signature: high brightness + low variance
+  const fail_hard=(mean>188&&stdDev<30)||(mean>215&&stdDev<52);
+  const pass=!fail_hard;
+  console.log('Screen: mean=',mean.toFixed(1),' std=',stdDev.toFixed(1),'→',fail_hard?'FAIL (screen)':'PASS');
+  return {pass,fail_hard,mean,stdDev};
+}
+
+// Downsample to 320x240 for fast pixel analysis
+function getPixelData(canvas) {
+  const tmp=document.createElement('canvas');
+  tmp.width=320; tmp.height=240;
+  tmp.getContext('2d').drawImage(canvas,0,0,320,240);
+  return tmp.getContext('2d').getImageData(0,0,320,240).data;
+}
+
+// ─────────────────────────────────────────────────────
+// OCR + NAME MATCH
+// ─────────────────────────────────────────────────────
+function processOcrResult(rawText) {
+  const {firstName,middleName,lastName}=userData;
+  const nameTokens=[...tokenize(firstName),...tokenize(lastName)];
+  if(middleName) nameTokens.push(...tokenize(middleName));
+  const textWords=normalize(rawText).split(/\s+/);
+  let matchCount=0, matchedTokens=[];
+  for(const token of nameTokens){
+    const found=textWords.some(w=>{
+      if(token.length<=3) return w===token;
+      return w===token||levenshtein(w,token)<=1;
+    });
+    if(found){matchCount++;matchedTokens.push(token);}
+  }
+  const required=Math.ceil(nameTokens.length*0.6);
+  const matched=matchCount>=required;
+  console.log(`Tokens:[${nameTokens}] Matched:[${matchedTokens}] ${matchCount}/${nameTokens.length}`);
+  if(matched){
+    setScanStatus('success','✅',`Name verified! Matched <strong>${matchCount}/${nameTokens.length}</strong> name parts from your ID.`);
+    $('retryBtn').style.display='none';
+    setTimeout(()=>{
+      setStep(3);
+      const full=[firstName,middleName,lastName].filter(Boolean).join(' ');
+      $('matchedNameDisplay').textContent=full;
+    },1600);
+  } else if(matchCount>0){
+    setScanStatus('warn','⚠️',`Only ${matchCount}/${nameTokens.length} name parts found. Make sure your full name is clearly visible. Please retake.`);
+  } else {
+    setScanStatus('error','❌','Your name could not be found on this ID. Ensure it is well-lit, in focus, and matches the name you entered.');
+  }
+}
+</script>
+</body>
+</html>
