@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Execution Day - Mobile Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#1e1208;font-family:'DM Sans',sans-serif;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:0;}
+:root{
+  --bg:#fdf8ef;--bg2:#f3e9d8;--bg3:#ede0ca;
+  --gold:#c49a3c;--brown:#4a3c31;--dark:#1a1007;--cream:#f5e6c8;
+  --text:#4a3c31;--mid:#7a6a5a;--dim:#a89580;--border:rgba(74,60,49,0.15);
+  --green:#27ae60;--red:#e74c3c;--blue:#3498db;--orange:#e67e22;
+}
+/* --- Frame wrappers --- */
+.screen-label{width:390px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border-radius:8px 8px 0 0;margin-top:48px;}
+.screen{width:390px;height:844px;background:var(--bg);overflow-y:auto;overflow-x:hidden;border-radius:0 0 16px 16px;border:1px solid rgba(196,154,60,0.3);scrollbar-width:none;}
+.screen::-webkit-scrollbar{display:none;}
+/* --- TOP NAV (live bar) --- */
+.exec-topbar{height:44px;background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:sticky;top:0;z-index:100;}
+.exec-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.exec-event-name{color:#fff;font-size:12px;font-weight:700;flex:1;margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.exec-end-btn{background:var(--red);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:800;cursor:pointer;flex-shrink:0;}
+/* --- Pre-Execution Page specific --- */
+.exec-page-pad{padding:16px;}
+.exec-countdown{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 16px;text-align:center;margin-bottom:14px;}
+.exec-cd-label{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;}
+.exec-cd-num{font-size:52px;font-weight:900;color:var(--gold);line-height:1;font-family:'Playfair Display',serif;}
+.exec-cd-sub{font-size:11px;color:var(--green);font-weight:700;margin-top:4px;}
+.exec-detail-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.exec-detail-hdr{background:var(--brown);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.exec-detail-hdr-title{color:var(--cream);font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.exec-confirmed-badge{background:rgba(39,174,96,0.2);border:1px solid rgba(39,174,96,0.4);color:var(--green);font-size:9px;font-weight:800;padding:3px 8px;border-radius:8px;}
+.exec-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;}
+.exec-field-lbl{font-size:9px;font-weight:800;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.exec-field-val{font-size:13px;font-weight:700;color:var(--text);}
+.exec-venue-row{padding:0 14px 14px;border-top:1px solid var(--border);margin-top:4px;padding-top:12px;}
+.exec-venue-val{font-size:11px;color:var(--blue);font-weight:600;line-height:1.4;}
+.btn-start-exec{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:15px;font-size:14px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.btn-view-logistics{width:100%;background:var(--gold);color:var(--dark);border:none;border-radius:12px;padding:14px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.exec-res-list{background:var(--brown);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.exec-res-list-hdr{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.exec-res-list-title{color:var(--cream);font-size:11px;font-weight:800;}
+.exec-res-list-sub{color:var(--dim);font-size:9px;margin-top:2px;}
+.exec-month-group{padding:8px 14px 4px;background:rgba(0,0,0,0.2);font-size:9px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;display:flex;justify-content:space-between;}
+.exec-res-item{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;}
+.exec-res-item.active{background:rgba(196,154,60,0.12);border-left:3px solid var(--gold);}
+.exec-res-name{color:#fff;font-size:13px;font-weight:700;}
+.exec-res-meta{color:var(--dim);font-size:10px;margin-top:1px;}
+.exec-res-badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:8px;font-weight:800;background:rgba(39,174,96,0.2);color:var(--green);margin-left:6px;}
+.exec-hint{text-align:center;font-size:10px;color:var(--dim);margin-top:8px;font-style:italic;}
+
+/* --- Syncing Screen --- */
+.sync-container{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;background:#1a1007;color:#f5e6c8;position:relative;overflow:hidden;}
+.sync-logo{font-family:'Playfair Display',serif;font-size:42px;font-weight:900;color:var(--gold);margin-bottom:20px;}
+.sync-spinner-box{position:relative;width:80px;height:80px;margin-bottom:30px;}
+.sync-spinner{width:100%;height:100%;border:3px solid rgba(196,154,60,0.1);border-top-color:var(--gold);border-radius:50%;animation:sync-spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;}
+@keyframes sync-spin{to{transform:rotate(360deg);}}
+.sync-spinner-inner{position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:3px solid rgba(196,154,60,0.05);border-bottom-color:var(--gold);border-radius:50%;animation:sync-spin-rev 2s linear infinite;}
+@keyframes sync-spin-rev{from{transform:rotate(360deg);}to{transform:rotate(0deg);}}
+.sync-title{font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px;}
+.sync-status{font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:800;}
+.sync-progress-wrap{width:200px;margin-top:32px;}
+.sync-progress-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden;margin-bottom:8px;}
+.sync-progress-fill{height:100%;background:var(--gold);width:65%;box-shadow:0 0 15px var(--gold);}
+.sync-progress-txt{font-size:9px;color:rgba(196,154,60,0.6);font-weight:800;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<!-- ========================================================= -->
+<!-- SCREEN 0: Pre-Flight Checklist -->
+<!-- ========================================================= -->
+<div class="screen-label">Screen 0 - Pre-Flight Checklist</div>
+<div class="screen">
+  <!-- Top Bar -->
+  <div class="exec-topbar" style="height: 60px;">
+    <div style="flex: 1;">
+      <div style="color:var(--gold); font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase;">PRE-FLIGHT STATUS</div>
+      <div class="exec-event-name" style="font-size:14px; margin-left:0;">robert's Event — Pre-Flight</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button style="background:var(--gold); color:var(--dark); border:none; padding:6px 12px; border-radius:8px; font-size:10px; font-weight:800; cursor:pointer;">All Good</button>
+      <button style="background:var(--green); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-size:10px; font-weight:800; cursor:pointer;">Begin</button>
+    </div>
+  </div>
+
+  <div class="exec-page-pad" style="display:flex; flex-direction:column; gap:20px;">
+    
+    <!-- Weather Card -->
+    <div style="background:var(--brown); border-radius:16px; padding:20px; color:var(--cream);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+        <div style="font-size:10px; font-weight:800; letter-spacing:1.5px; opacity:0.8;">REAL-TIME WEATHER</div>
+        <div style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700;">STI Caloocan</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:20px;">
+        <div style="font-size:48px; font-weight:900; font-family:'Playfair Display', serif;">28.5°C</div>
+        <div>
+          <div style="font-size:16px; font-weight:700;">Partly Cloudy</div>
+          <div style="font-size:10px; opacity:0.6; margin-top:2px;">H: 32° L: 26° | Humidity: 65%</div>
+        </div>
+      </div>
+      <div style="margin-top:16px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; text-align:center;">
+        <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px;">
+          <div style="font-size:8px; opacity:0.6;">WIND</div>
+          <div style="font-size:11px; font-weight:800;">12 km/h</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px;">
+          <div style="font-size:8px; opacity:0.6;">UV INDEX</div>
+          <div style="font-size:11px; font-weight:800;">High (7)</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px;">
+          <div style="font-size:8px; opacity:0.6;">CHANCE OF RAIN</div>
+          <div style="font-size:11px; font-weight:800;">15%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Reschedule -->
+    <div style="background:var(--bg2); border:1.5px solid var(--border); border-radius:16px; padding:20px;">
+      <div style="font-size:10px; font-weight:800; color:var(--red); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:14px;">⚠️</span> Emergency Reschedule
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="font-size:9px; font-weight:800; color:var(--mid); display:block; margin-bottom:4px;">PROPOSED NEW DATE</label>
+          <input type="date" value="2026-05-20" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit; font-size:13px;">
+        </div>
+        <div>
+          <label style="font-size:9px; font-weight:800; color:var(--mid); display:block; margin-bottom:4px;">NEW TIME RANGE</label>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <input type="time" value="09:00" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit; font-size:12px;">
+            <input type="time" value="13:00" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit; font-size:12px;">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:9px; font-weight:800; color:var(--mid); display:block; margin-bottom:4px;">RESCHEDULE REASON</label>
+          <textarea placeholder="Type reason for reschedule..." style="width:100%; height:60px; padding:10px; border:1px solid var(--border); border-radius:8px; background:#fff; font-family:inherit; font-size:12px; resize:none;"></textarea>
+        </div>
+        <button style="background:var(--dark); color:var(--cream); border:none; padding:12px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer;">SUBMIT RESCHEDULE REQUEST</button>
+      </div>
+    </div>
+
+    <!-- Communication & Contact -->
+    <div style="background:#fff; border:1.5px solid var(--border); border-radius:16px; overflow:hidden;">
+      <div style="background:var(--brown); padding:12px 16px; color:var(--cream); display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:10px; font-weight:800; letter-spacing:1px;">CUSTOMER CONTACTS</div>
+        <button style="background:rgba(255,255,255,0.1); border:none; color:var(--gold); padding:4px 8px; border-radius:4px; font-size:9px; font-weight:800;">OPEN CHAT</button>
+      </div>
+      <div style="padding:16px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+          <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="font-size:8px; color:var(--dim); font-weight:800; margin-bottom:2px;">CLIENT</div>
+            <div style="font-size:12px; font-weight:800;">robert</div>
+          </div>
+          <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <div style="font-size:8px; color:var(--dim); font-weight:800; margin-bottom:2px;">EMAIL</div>
+            <div style="font-size:11px; font-weight:700;">robert@gmail.com</div>
+          </div>
+        </div>
+        <!-- Mini Chat Area -->
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; height:180px; display:flex; flex-direction:column;">
+          <div style="flex:1; padding:12px; font-size:11px; color:var(--mid); text-align:center; display:flex; align-items:center; justify-content:center; opacity:0.6;">
+            No new messages from customer.
+          </div>
+          <div style="padding:8px; border-top:1px solid var(--border); display:flex; gap:8px;">
+            <input type="text" placeholder="Type a message..." style="flex:1; background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px; font-size:11px; font-family:inherit;">
+            <button style="background:var(--gold); color:var(--dark); border:none; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center;">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reservation Review -->
+    <div style="background:#fff; border:1.5px solid var(--border); border-radius:16px; overflow:hidden;">
+      <div style="background:var(--brown); padding:12px 16px; color:var(--cream); font-size:10px; font-weight:800; letter-spacing:1px;">FULL RESERVATION REVIEW</div>
+      <div style="padding:16px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; row-gap:12px;">
+          <div><div style="font-size:8px; color:var(--dim); font-weight:800;">EVENT NAME</div><div style="font-size:12px; font-weight:800;">robert</div></div>
+          <div><div style="font-size:8px; color:var(--dim); font-weight:800;">EVENT TYPE</div><div style="font-size:12px; font-weight:800;">Super duper party</div></div>
+          <div><div style="font-size:8px; color:var(--dim); font-weight:800;">EVENT DATE</div><div style="font-size:12px; font-weight:800;">2026-05-15</div></div>
+          <div><div style="font-size:8px; color:var(--dim); font-weight:800;">TOTAL PAID</div><div style="font-size:12px; font-weight:800; color:var(--green);">₱162,730</div></div>
+          <div style="grid-column: span 2;"><div style="font-size:8px; color:var(--dim); font-weight:800;">LOCATION</div><div style="font-size:11px; font-weight:600; color:var(--blue);">STI Caloocan, Samson Road...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategy Preview -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:10px; font-weight:800; color:var(--gold); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px;">EXECUTION STRATEGY PREVIEW</div>
+      
+      <!-- Phase 1 -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; font-weight:800;">PHASE 1: DEPARTURE</div>
+          <div style="font-size:10px; color:var(--mid);">03:00 – 05:00</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:10px; color:var(--mid); display:flex; align-items:center; gap:6px;"><span style="color:var(--gold);">•</span> Count equipment</div>
+          <div style="font-size:10px; color:var(--mid); display:flex; align-items:center; gap:6px;"><span style="color:var(--gold);">•</span> Load transport</div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:11px; font-weight:800;">PHASE 2: DEPLOYMENT</div>
+          <div style="font-size:10px; color:var(--mid);">05:00 – 08:00</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-size:10px; color:var(--mid); display:flex; align-items:center; gap:6px;"><span style="color:var(--gold);">•</span> Venue setup</div>
+          <div style="font-size:10px; color:var(--mid); display:flex; align-items:center; gap:6px;"><span style="color:var(--gold);">•</span> Staff briefing</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- SCREEN 1: Execution Day Overview (Pre-Execution) -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 1 - Execution Day & Settlements</div>
+
+<div class="screen">
+  <!-- Top Bar -->
+  <div class="exec-topbar">
+    <div class="exec-live-dot"></div>
+    <div class="exec-event-name">Execution Day & Settlements</div>
+  </div>
+
+  <!-- Reservations List -->
+  <div class="exec-page-pad">
+    <div style="font-size:11px;color:var(--mid);margin-bottom:12px;">All approved reservations organized by month — select one to view execution status</div>
+
+    <div class="exec-res-list">
+      <div class="exec-res-list-hdr">
+        <div class="exec-res-list-title">Approved Reservations</div>
+        <div class="exec-res-list-sub">Grouped by event month</div>
+      </div>
+      <div class="exec-month-group"><span>APRIL 2026</span><span>›</span></div>
+      <div class="exec-month-group"><span>MAY 2026</span><span style="color:var(--gold);">3 ›</span></div>
+      <div class="exec-res-item active">
+        <div class="exec-res-name">robert <span class="exec-res-badge">LIVE</span></div>
+        <div class="exec-res-meta">Super duper party</div>
+        <div class="exec-res-meta">2026-05-15</div>
+      </div>
+      <div class="exec-res-item">
+        <div class="exec-res-name">robert <span style="display:inline-block;background:rgba(52,152,219,0.2);color:var(--blue);font-size:8px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;">done</span></div>
+        <div class="exec-res-meta">wedding_now</div>
+        <div class="exec-res-meta">2026-05-11</div>
+      </div>
+      <div class="exec-month-group"><span>NO DATE</span><span>1 ›</span></div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="exec-countdown">
+      <div class="exec-cd-label">Days Until Execution</div>
+      <div class="exec-cd-num">10</div>
+      <div class="exec-cd-sub">days remaining</div>
+    </div>
+
+    <!-- Event Detail Card -->
+    <div style="font-size:11px;font-weight:800;color:var(--brown);margin-bottom:8px;">robert's Event &nbsp;<span style="color:var(--mid);font-weight:400;">Super duper party · 2026-05-15</span></div>
+    <div class="exec-detail-card">
+      <div class="exec-detail-hdr">
+        <span class="exec-detail-hdr-title">Event Details</span>
+        <span class="exec-confirmed-badge">Confirmed</span>
+      </div>
+      <div class="exec-detail-grid">
+        <div><div class="exec-field-lbl">Client</div><div class="exec-field-val">robert</div></div>
+        <div><div class="exec-field-lbl">Event Type</div><div class="exec-field-val">Super duper party</div></div>
+        <div><div class="exec-field-lbl">Execution Date</div><div class="exec-field-val">Friday, May 15, 2026</div></div>
+        <div><div class="exec-field-lbl">Time</div><div class="exec-field-val">08:00 – 12:00</div></div>
+        <div><div class="exec-field-lbl">Package</div><div class="exec-field-val">Custom Mod: ULTRA PARTY Package</div></div>
+        <div><div class="exec-field-lbl">Total Amount</div><div class="exec-field-val" style="color:var(--gold);">₱205,000</div></div>
+      </div>
+      <div class="exec-venue-row">
+        <div class="exec-field-lbl">Venue</div>
+        <div class="exec-venue-val">STI Caloocan, Samson Road, Barangay 80, Zone 7, University Hills, District 1, Caloocan, Northern Manila District, Metro Manila, 1400, Philippines</div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <button class="btn-start-exec">▶ Start Execution Day</button>
+    <button class="btn-view-logistics">📋 View Logistics &amp; Timeline</button>
+    <div class="exec-hint">Opens this reservation's timeline in Reservation Details Handling</div>
+  </div>
+</div>
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 1.5 - Syncing Operational Data</div>
+<div class="screen">
+  <div class="sync-container">
+    <div class="sync-logo">Halden's</div>
+    
+    <div class="sync-spinner-box">
+      <div class="sync-spinner"></div>
+      <div class="sync-spinner-inner"></div>
+    </div>
+    
+    <div class="sync-title">Syncing Data...</div>
+    <div class="sync-status">Preparing Departure Sequence</div>
+    
+    <div class="sync-progress-wrap">
+      <div class="sync-progress-bar">
+        <div class="sync-progress-fill"></div>
+      </div>
+      <div class="sync-progress-txt">Connecting to logistics server... 65%</div>
+    </div>
+    
+    <div style="position:absolute; bottom:40px; left:0; right:0; text-align:center;">
+      <div style="font-size:8px; color:rgba(255,255,255,0.2); font-weight:800; letter-spacing:1px;">ENCRYPTED P2P HANDSHAKE ACTIVE</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 2: Live Execution - Map + Logistics Tracker -->
+<!-- ========================================================= -->
+<style>
+.map-block{width:100%;height:260px;background:linear-gradient(180deg,#b8c9a0 0%,#a8bc8a 30%,#98ad70 60%,#7a9460 100%);position:relative;overflow:hidden;flex-shrink:0;}
+.map-road-h{position:absolute;background:rgba(255,255,255,0.6);height:6px;left:0;right:0;}
+.map-road-v{position:absolute;background:rgba(255,255,255,0.6);width:6px;top:0;bottom:0;}
+.map-pin{position:absolute;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;}
+.map-pin-inner{transform:rotate(45deg);font-size:12px;}
+.map-truck{position:absolute;width:32px;height:32px;background:#3498db;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.map-overlay-tl{position:absolute;top:8px;left:8px;background:rgba(26,16,7,0.85);border-radius:8px;padding:6px 10px;color:#fff;font-size:11px;font-weight:700;}
+.map-overlay-tr{position:absolute;top:8px;right:8px;background:rgba(26,16,7,0.85);border-radius:8px;padding:6px 10px;color:#e74c3c;font-size:12px;font-weight:900;}
+.map-arrived-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(196,154,60,0.92);padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.map-arrived-icon{color:#1a1007;font-size:14px;}
+.map-arrived-text{color:#1a1007;font-size:11px;font-weight:700;}
+.exec-section{padding:12px 14px 0;}
+.exec-sec-title{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.exec-sec-title .red-dot{width:6px;height:6px;border-radius:50%;background:var(--red);}
+.logistics-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.logistics-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.logistics-lbl{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.logistics-val{font-size:12px;font-weight:700;color:var(--text);}
+.address-row{font-size:11px;color:var(--blue);font-weight:600;margin-bottom:8px;line-height:1.4;}
+.btn-stop-track{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:var(--red);border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;width:100%;}
+.eta-box{background:rgba(196,154,60,0.08);border:1px solid rgba(196,154,60,0.2);border-radius:10px;padding:12px;}
+.eta-main{font-size:28px;font-weight:900;color:var(--gold);}
+.eta-sub{font-size:10px;color:var(--mid);}
+.dep-task-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.dep-task{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;}
+.dep-task.active{border-color:var(--green);background:rgba(39,174,96,0.04);}
+.dep-task-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.dep-task-name .chk{width:14px;height:14px;border-radius:3px;border:2px solid var(--border);display:inline-block;flex-shrink:0;}
+.dep-task-name .chk.done{background:var(--green);border-color:var(--green);}
+.dep-task-btn{display:inline-block;padding:3px 7px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--border);color:var(--mid);margin-right:4px;margin-top:4px;}
+.dep-task-btn.gold{border-color:var(--gold);color:var(--gold);}
+.phase-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:12px;}
+.phase-row::-webkit-scrollbar{display:none;}
+.phase-chip{flex-shrink:0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:72px;}
+.phase-chip.active{border-color:var(--green);background:rgba(39,174,96,0.06);}
+.phase-chip.done{background:rgba(74,60,49,0.06);}
+.phase-chip-name{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text);}
+.phase-chip.active .phase-chip-name{color:var(--green);}
+.phase-chip-time{font-size:9px;color:var(--dim);margin-top:1px;}
+.active-phase-card{background:#fff;border:1.5px solid var(--green);border-radius:12px;padding:14px;margin-bottom:10px;}
+.act-phase-lbl{font-size:9px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.act-phase-name{font-size:18px;font-weight:900;color:var(--text);font-family:'Playfair Display',serif;}
+.act-phase-time{font-size:11px;color:var(--mid);margin-bottom:10px;}
+.act-task-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.act-task-item:last-child{border:none;}
+.act-task-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+.act-task-name{font-size:12px;font-weight:600;color:var(--text);}
+.delivery-log{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;}
+.log-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(74,60,49,0.06);}
+.log-item:last-child{border:none;}
+.log-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px;}
+.log-text{font-size:11px;color:var(--text);line-height:1.4;}
+.log-time{font-size:10px;color:var(--dim);}
+</style>
+
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 2 - Live Execution: Map + Logistics Tracker</div>
+
+<div class="screen" style="background:#fdf8ef;">
+  <!-- Live Top Bar -->
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div class="exec-live-dot"></div>
+      <span style="color:var(--green);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">LIVE</span>
+    </div>
+    <div class="exec-event-name" style="font-size:11px;">robert's Event · STI Caloocan · 08:00</div>
+    <button class="exec-end-btn">End Execution</button>
+  </div>
+
+  <!-- MAP AT THE TOP -->
+  <div class="map-block">
+    <!-- Grid roads -->
+    <div class="map-road-h" style="top:40%;"></div>
+    <div class="map-road-h" style="top:65%;"></div>
+    <div class="map-road-h" style="top:20%;height:3px;opacity:0.4;"></div>
+    <div class="map-road-v" style="left:25%;"></div>
+    <div class="map-road-v" style="left:55%;"></div>
+    <div class="map-road-v" style="left:75%;width:3px;opacity:0.4;"></div>
+    <!-- Water/park -->
+    <div style="position:absolute;top:0;right:0;width:35%;height:45%;background:rgba(100,160,220,0.35);border-radius:0 0 0 40px;"></div>
+    <div style="position:absolute;bottom:10%;left:10%;width:20%;height:15%;background:rgba(80,140,80,0.3);border-radius:8px;"></div>
+    <!-- Truck (moving) -->
+    <div class="map-truck" style="left:42%;top:52%;">&#128652;</div>
+    <!-- Destination pin -->
+    <div class="map-pin" style="right:20%;top:30%;background:var(--red);">
+      <div class="map-pin-inner">&#128204;</div>
+    </div>
+    <!-- Origin pin -->
+    <div class="map-pin" style="left:15%;top:60%;background:var(--gold);">
+      <div class="map-pin-inner">&#127968;</div>
+    </div>
+    <!-- Overlays -->
+    <div class="map-overlay-tl">0</div>
+    <div class="map-overlay-tr">16</div>
+    <!-- Arrived bar -->
+    <div class="map-arrived-bar">
+      <span class="map-arrived-icon">&#9650;</span>
+      <span class="map-arrived-text">Delayed Arrival · Estimated arrival delayed · -351 mins</span>
+    </div>
+  </div>
+
+  <!-- ADMIN LOCATION -->
+  <div class="exec-section">
+    <div class="exec-sec-title">Admin Location</div>
+    <div class="logistics-card">
+      <div class="address-row">Labanña Street, Barangay 14 Zone 2.1</div>
+      <button class="btn-stop-track">&#9632; Stop Tracking</button>
+    </div>
+
+    <!-- Status Note -->
+    <div class="exec-sec-title">Delivery / Departure Note</div>
+    <div class="logistics-card">
+      <textarea style="width:100%;border:none;background:rgba(196,154,60,0.05);border-radius:6px;padding:8px;font-size:11px;height:56px;resize:none;font-family:'DM Sans',sans-serif;color:var(--text);" placeholder="Enter notes about current status..."></textarea>
+      <button style="margin-top:8px;background:var(--gold);color:var(--dark);border:none;border-radius:7px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;">Save Note</button>
+    </div>
+
+    <!-- ETA -->
+    <div class="exec-sec-title">Estimated Arrival</div>
+    <div class="eta-box" style="margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div><div class="eta-main">16</div><div class="eta-sub">hrs</div></div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--text);margin-top:4px;">19:25–19:45<br><span style="color:var(--mid);font-size:10px;">30 mins (est.)</span></div></div>
+        <div style="text-align:right;">
+          <div style="font-size:10px;color:var(--dim);">Arrived</div>
+          <div style="font-size:11px;font-weight:700;">10:21 PM</div>
+          <div style="font-size:10px;color:var(--dim);">Finish: 0:4ish</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Smart Logistics Tracker -->
+    <div class="exec-sec-title"><span class="red-dot"></span> Smart Logistics Tracker</div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--mid);margin-bottom:10px;">Calculating time requirements...</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:8px;">
+        <span style="color:var(--dim);">Time Remaining: <span style="color:var(--red);font-weight:800;">Expired</span></span>
+        <span style="color:var(--dim);">Allotted Travel: <span style="font-weight:800;">16 mins</span></span>
+        <span style="color:var(--gold);font-weight:900;">Deficit: 991 mins</span>
+      </div>
+    </div>
+
+    <!-- Emergency Deployment -->
+    <div class="exec-sec-title"><span class="red-dot"></span> Emergency Deployment Prep</div>
+    <div class="dep-task-grid">
+      <div class="dep-task"><div class="dep-task-name"><span class="chk"></span>Count equipment</div><div><span class="dep-task-btn">📸</span><span class="dep-task-btn">review</span><span class="dep-task-btn">done</span></div></div>
+      <div class="dep-task active"><div class="dep-task-name"><span class="chk done"></span>Set up venue</div><div><span class="dep-task-btn gold">done</span><span class="dep-task-btn">undo</span></div></div>
+      <div class="dep-task"><div class="dep-task-name"><span class="chk"></span>Set up dishes</div><div><span class="dep-task-btn" style="color:var(--red);border-color:var(--red);">overdue</span></div></div>
+      <div class="dep-task"><div class="dep-task-name"><span class="chk"></span>Final briefing</div><div><span class="dep-task-btn" style="color:var(--red);border-color:var(--red);">overdue</span></div></div>
+    </div>
+
+    <!-- Execution Phases -->
+    <div class="exec-sec-title">Execution Phases</div>
+    <div class="phase-row">
+      <div class="phase-chip done"><div class="phase-chip-name">Departure</div><div class="phase-chip-time">03:00–05:00</div><div style="font-size:9px;color:var(--dim);">Done · Activities</div></div>
+      <div class="phase-chip active"><div class="phase-chip-name" style="color:var(--green);">Deployment</div><div class="phase-chip-time">05:00–08:00</div><div style="font-size:9px;color:var(--green);font-weight:700;">Active</div></div>
+      <div class="phase-chip"><div class="phase-chip-name">Execution</div><div class="phase-chip-time">08:00–15:00</div><div style="font-size:9px;color:var(--dim);">Inactive</div></div>
+      <div class="phase-chip"><div class="phase-chip-name">Washout</div><div class="phase-chip-time">15:00–17:00</div><div style="font-size:9px;color:var(--dim);">Inactive</div></div>
+      <div class="phase-chip"><div class="phase-chip-name">Restorage</div><div class="phase-chip-time">17:00–19:00</div><div style="font-size:9px;color:var(--dim);">Inactive</div></div>
+    </div>
+
+    <!-- Active Phase -->
+    <div class="exec-sec-title">Active Phase</div>
+    <div class="active-phase-card">
+      <div class="act-phase-lbl">Current Phase</div>
+      <div class="act-phase-name">DEPARTURE</div>
+      <div class="act-phase-time">03:00 – 05:00 · 2 Activities</div>
+      <div class="act-task-item"><div class="act-task-dot"></div><div><div class="act-task-name">Count equipment</div><div style="font-size:10px;color:var(--dim);">Done</div></div></div>
+      <div class="act-task-item"><div class="act-task-dot"></div><div><div class="act-task-name">Load equipment</div><div style="font-size:10px;color:var(--mid);">In progress</div></div></div>
+    </div>
+
+    <!-- Delivery Log -->
+    <div class="exec-sec-title">Delivery Log</div>
+    <div class="delivery-log" style="margin-bottom:16px;">
+      <div class="log-item"><div class="log-dot"></div><div><div class="log-text">GPS Live started Geolocation</div><div class="log-time">04:54 PM</div></div></div>
+      <div class="log-item"><div class="log-dot"></div><div><div class="log-text">Live tracking started</div><div class="log-time">04:24 PM</div></div></div>
+      <div class="log-item"><div class="log-dot"></div><div><div class="log-text">Admin location returned</div><div class="log-time">04:22 PM</div></div></div>
+      <div class="log-item"><div class="log-dot"></div><div><div class="log-text">Venue known: STI Caloocan, Samson Road, Barangay 80...</div><div class="log-time">04:22 PM</div></div></div>
+      <div class="log-item"><div class="log-dot"></div><div><div class="log-text">Execution Day started</div><div class="log-time">04:22 PM</div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 3: Deployment Phase -->
+<!-- ========================================================= -->
+<style>
+.toggle-view-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;}
+.phase-progress-bar{height:6px;background:rgba(74,60,49,0.15);border-radius:3px;margin-top:6px;overflow:hidden;}
+.phase-progress-fill{height:100%;border-radius:3px;}
+.phase-progress-fill.overdue{background:var(--red);}
+.phase-progress-fill.ongoing{background:var(--green);}
+.mini-map-side{width:100%;height:160px;background:linear-gradient(180deg,#b8c9a0,#98ad70);position:relative;overflow:hidden;border-radius:0;}
+.mini-map-side .map-road-h{position:absolute;background:rgba(255,255,255,0.6);height:4px;left:0;right:0;}
+.mini-map-side .map-road-v{position:absolute;background:rgba(255,255,255,0.6);width:4px;top:0;bottom:0;}
+.mini-map-side .map-pin{position:absolute;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;}
+.mini-map-side .map-pin-inner{transform:rotate(45deg);font-size:10px;}
+.task-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
+.task-card.active-task{border-color:var(--green);background:rgba(39,174,96,0.05);}
+.task-card-name{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.task-chk{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;}
+.task-chk.done{background:var(--green);border-color:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;}
+.task-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.task-btn{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;border:1px solid var(--border);background:#fff;color:var(--mid);cursor:pointer;}
+.task-btn.gold{border-color:var(--gold);color:var(--gold);background:rgba(196,154,60,0.05);}
+.task-btn.green{border-color:var(--green);color:var(--green);background:rgba(39,174,96,0.05);}
+.seating-area{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+.seating-row{display:flex;gap:10px;margin-bottom:10px;justify-content:center;}
+.table-unit{width:40px;height:30px;background:#222;border-radius:4px;position:relative;display:flex;align-items:center;justify-content:center;}
+.table-unit::before,.table-unit::after{content:'';position:absolute;width:6px;height:6px;background:#222;border-radius:50%;}
+.table-unit::before{top:-8px;left:50%;transform:translateX(-50%);}
+.table-unit::after{bottom:-8px;left:50%;transform:translateX(-50%);}
+.table-chair-l{position:absolute;left:-9px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#222;border-radius:50%;}
+.table-chair-r{position:absolute;right:-9px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#222;border-radius:50%;}
+.cmd-log{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.cmd-textarea{width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;height:60px;resize:none;font-family:'DM Sans',sans-serif;color:var(--text);background:rgba(196,154,60,0.04);}
+.btn-log-field{width:100%;background:var(--gold);color:var(--dark);border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:800;margin-top:8px;cursor:pointer;}
+.session-timeline-btn{background:transparent;border:none;color:var(--gold);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;}
+.bottom-phase-bar{position:sticky;bottom:0;background:var(--dark);display:flex;justify-content:space-around;padding:10px 8px;border-top:1px solid rgba(196,154,60,0.15);}
+.bpb-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.bpb-name{font-size:8px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;}
+.bpb-time{font-size:8px;color:rgba(255,255,255,0.4);}
+.bpb-item.bpb-active .bpb-name{color:var(--gold);}
+.bpb-item.bpb-active .bpb-time{color:rgba(196,154,60,0.7);}
+.bpb-active-indicator{width:100%;height:2px;background:var(--gold);border-radius:1px;margin-bottom:2px;}
+</style>
+
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 3 - Deployment Phase (Toggle View)</div>
+
+<div class="screen" style="background:var(--bg);display:flex;flex-direction:column;">
+  <!-- Live Top Bar -->
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;"><div class="exec-live-dot"></div><span style="color:var(--green);font-size:9px;font-weight:800;">LIVE</span></div>
+    <div class="exec-event-name" style="font-size:10px;">robert's Event · 05:00 – 08:00</div>
+    <div style="display:flex;gap:6px;">
+      <button class="toggle-view-btn">⊞ Toggle View</button>
+      <button class="exec-end-btn">End Execution</button>
+    </div>
+  </div>
+
+  <!-- Mini map strip -->
+  <div class="mini-map-side">
+    <div class="map-road-h" style="top:40%;"></div>
+    <div class="map-road-h" style="top:70%;"></div>
+    <div class="map-road-v" style="left:30%;"></div>
+    <div class="map-road-v" style="left:65%;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(26,16,7,0.25);"></div>
+    <div class="map-pin" style="right:25%;top:25%;background:var(--red);width:18px;height:18px;"><div class="map-pin-inner" style="font-size:8px;">📍</div></div>
+    <div style="position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;">
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">+</div>
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">–</div>
+    </div>
+  </div>
+
+  <!-- Main content scrollable -->
+  <div style="flex:1;overflow-y:auto;padding:14px 14px 0;">
+
+    <!-- Phase Header -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:800;color:var(--mid);letter-spacing:1px;text-transform:uppercase;">Current Operational Phase</div>
+      <div style="font-size:28px;font-weight:900;color:var(--text);font-family:'Playfair Display',serif;">DEPLOYMENT</div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:6px;">06:00 – 08:00</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:9px;color:var(--mid);">PHASE PROGRESS</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="background:rgba(231,76,60,0.12);color:var(--red);font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;">OVERDUE</span>
+          <span style="font-size:12px;font-weight:900;color:var(--text);">25%</span>
+        </div>
+      </div>
+      <div class="phase-progress-bar"><div class="phase-progress-fill overdue" style="width:25%;"></div></div>
+    </div>
+
+    <!-- Task Cards -->
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Count equipment</div>
+      <div class="task-btns"><span class="task-btn">📸</span><span class="task-btn">review</span><span class="task-btn">done</span></div>
+    </div>
+    <div class="task-card active-task">
+      <div class="task-card-name"><div class="task-chk done">✓</div>Set up venue</div>
+      <div class="task-btns"><span class="task-btn gold">done</span><span class="task-btn">undo</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Set up dishes</div>
+      <div class="task-btns"><span class="task-btn">continue</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Final briefing</div>
+      <div class="task-btns"><span class="task-btn">review</span></div>
+    </div>
+
+    <!-- Venue Layout -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;">Venue Layout Reference</div>
+    <div class="seating-area" style="margin-bottom:14px;">
+      <div class="seating-row">
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div style="width:14px;"></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+      </div>
+      <div class="seating-row">
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div style="width:14px;"></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+      </div>
+      <div class="seating-row">
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+        <div class="table-unit"><div class="table-chair-l"></div><div class="table-chair-r"></div></div>
+      </div>
+    </div>
+
+    <!-- Command Log -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">📋 Command Log</div>
+    <div class="cmd-log">
+      <textarea class="cmd-textarea" placeholder="Write detailed fielding..."></textarea>
+      <button class="btn-log-field">+ Log Field Update</button>
+    </div>
+
+    <!-- Session Timeline -->
+    <button class="session-timeline-btn" style="margin-bottom:14px;">⊙ Session Timeline</button>
+  </div>
+
+  <!-- Sticky Bottom Phase Bar -->
+  <div class="bottom-phase-bar">
+    <div class="bpb-item"><div class="bpb-name">Departure</div><div class="bpb-time">03:00–05:00</div></div>
+    <div class="bpb-item bpb-active"><div class="bpb-active-indicator"></div><div class="bpb-name">Deployment</div><div class="bpb-time">05:00–08:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Execution</div><div class="bpb-time">08:00–15:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Washout</div><div class="bpb-time">15:00–17:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Restorage</div><div class="bpb-time">17:00–19:00</div></div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- SCREEN 4: Execution Phase -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 4 - Execution Phase</div>
+
+<div class="screen" style="background:var(--bg);display:flex;flex-direction:column;">
+  <!-- Live Top Bar -->
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;"><div class="exec-live-dot"></div><span style="color:var(--green);font-size:9px;font-weight:800;">LIVE</span></div>
+    <div class="exec-event-name" style="font-size:10px;">robert's Event · 09:00 – 15:00</div>
+    <div style="display:flex;gap:6px;">
+      <button class="toggle-view-btn">⊞ Toggle View</button>
+      <button class="exec-end-btn">End Execution</button>
+    </div>
+  </div>
+
+  <!-- Mini map strip -->
+  <div class="mini-map-side" style="height:120px;">
+    <div class="map-road-h" style="top:50%;"></div>
+    <div class="map-road-v" style="left:40%;"></div>
+    <div style="position:absolute;inset:0;background:rgba(26,16,7,0.2);"></div>
+    <div class="map-pin" style="right:30%;top:20%;background:var(--red);width:18px;height:18px;"><div class="map-pin-inner" style="font-size:8px;">📍</div></div>
+    <div style="position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;">
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">+</div>
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">–</div>
+    </div>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;padding:14px 14px 0;">
+
+    <!-- Phase Header -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:800;color:var(--mid);letter-spacing:1px;text-transform:uppercase;">Current Operational Phase</div>
+      <div style="font-size:28px;font-weight:900;color:var(--text);font-family:'Playfair Display',serif;">EXECUTION</div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:6px;">09:00 – 15:00</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:9px;color:var(--mid);">PHASE PROGRESS</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="background:rgba(39,174,96,0.12);color:var(--green);font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;">ONGOING</span>
+          <span style="font-size:12px;font-weight:900;color:var(--text);">0%</span>
+        </div>
+      </div>
+      <div class="phase-progress-bar"><div class="phase-progress-fill ongoing" style="width:5%;"></div></div>
+    </div>
+
+    <!-- Quick Extend -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:700;color:var(--mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Quick Extend Event (2H 5M Added)</div>
+      <div style="display:flex;gap:8px;">
+        <button style="background:rgba(39,174,96,0.1);border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;">+5m</button>
+        <button style="background:rgba(39,174,96,0.1);border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;">+10m</button>
+        <button style="background:rgba(39,174,96,0.1);border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;">+1h</button>
+      </div>
+    </div>
+
+    <!-- Task Cards -->
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Count equipment</div>
+      <div class="task-btns"><span class="task-btn">review</span><span class="task-btn">start!</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Serve guests</div>
+      <div class="task-btns"><span class="task-btn">start</span><span class="task-btn">done</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Monitor stations</div>
+      <div class="task-btns"><span class="task-btn">continue</span><span class="task-btn">end</span></div>
+    </div>
+
+    <!-- Event Program Flow -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;">Event Program Flow</div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:12px;font-weight:900;color:var(--gold);">08:00</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Coordinator talks</div>
+        </div>
+        <button style="background:rgba(196,154,60,0.1);border:1px solid rgba(196,154,60,0.3);color:var(--gold);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;">PENDING</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(39,174,96,0.04);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:12px;font-weight:900;color:var(--gold);">09:00</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Eating</div>
+        </div>
+        <button style="background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:var(--green);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;">CONFIRM</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:12px;font-weight:900;color:var(--gold);">10:00</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Closing maybe</div>
+        </div>
+        <button style="background:rgba(196,154,60,0.1);border:1px solid rgba(196,154,60,0.3);color:var(--gold);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;">PENDING</button>
+      </div>
+    </div>
+
+    <!-- Guest Attendance -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Guest Attendance</div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);">Relou</div>
+        <span style="background:rgba(39,174,96,0.12);color:var(--green);font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;">PRESENT</span>
+      </div>
+    </div>
+
+    <!-- Command Log -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">📋 Command Log</div>
+    <div class="cmd-log">
+      <textarea class="cmd-textarea" placeholder="Write detailed fielding..."></textarea>
+      <button class="btn-log-field">+ Log Field Update</button>
+    </div>
+    <button class="session-timeline-btn" style="margin-bottom:14px;">⊙ Session Timeline</button>
+  </div>
+
+  <!-- Sticky Bottom Phase Bar -->
+  <div class="bottom-phase-bar">
+    <div class="bpb-item"><div class="bpb-name">Departure</div><div class="bpb-time">03:00–05:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Deployment</div><div class="bpb-time">05:00–08:00</div></div>
+    <div class="bpb-item bpb-active"><div class="bpb-active-indicator"></div><div class="bpb-name">Execution</div><div class="bpb-time">08:00–15:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Washout</div><div class="bpb-time">15:00–17:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Restorage</div><div class="bpb-time">17:00–19:00</div></div>
+  </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- SCREEN 5: Bashout Phase -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 5 - Bashout Phase</div>
+
+<div class="screen" style="background:var(--bg);display:flex;flex-direction:column;">
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;"><div class="exec-live-dot"></div><span style="color:var(--green);font-size:9px;font-weight:800;">LIVE</span></div>
+    <div class="exec-event-name" style="font-size:10px;">robert's Event · 15:00 – 18:00</div>
+    <div style="display:flex;gap:6px;">
+      <button class="toggle-view-btn">⊞ Toggle View</button>
+      <button class="exec-end-btn">End Execution</button>
+    </div>
+  </div>
+  <div class="mini-map-side" style="height:120px;">
+    <div class="map-road-h" style="top:50%;"></div>
+    <div class="map-road-v" style="left:40%;"></div>
+    <div style="position:absolute;inset:0;background:rgba(26,16,7,0.2);"></div>
+    <div class="map-pin" style="right:30%;top:20%;background:var(--red);width:18px;height:18px;"><div class="map-pin-inner" style="font-size:8px;">📍</div></div>
+    <div style="position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;">
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">+</div>
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">–</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px 14px 0;">
+    <!-- Phase Header -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:800;color:var(--mid);letter-spacing:1px;text-transform:uppercase;">Current Operational Phase</div>
+      <div style="font-size:28px;font-weight:900;color:var(--text);font-family:'Playfair Display',serif;">BASHOUT</div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:6px;">15:00 – 18:00</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:9px;color:var(--mid);">PHASE PROGRESS</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="background:rgba(231,76,60,0.12);color:var(--red);font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;">OVERDUE</span>
+          <span style="font-size:12px;font-weight:900;color:var(--text);">33%</span>
+        </div>
+      </div>
+      <div class="phase-progress-bar"><div class="phase-progress-fill overdue" style="width:33%;"></div></div>
+    </div>
+
+    <!-- Billing & Assessment -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Bashout Phase Billing &amp; Assessment</div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="margin-bottom:10px;">
+            <div style="font-size:11px;color:var(--blue);font-weight:600;text-decoration:underline;margin-bottom:1px;">Event Overtime Fee (2h added)</div>
+            <div style="font-size:9px;color:var(--dim);">Target: 90 mins ⓘ</div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:11px;color:var(--blue);font-weight:600;text-decoration:underline;margin-bottom:1px;">Force Fee Adjustment (0 extra)</div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:11px;color:var(--mid);font-weight:600;">Broken/Lost Equipment Claims</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:4px;">
+            <div style="font-size:11px;font-weight:700;color:var(--text);">Event Grand Total</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text);">Amount Paid So Far</div>
+          </div>
+        </div>
+        <div style="text-align:right;margin-left:16px;">
+          <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:10px;">₱2,000</div>
+          <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:10px;">₱0</div>
+          <div style="margin-bottom:10px;"><input type="text" value="₱" style="width:70px;border:1px solid var(--border);border-radius:5px;padding:3px 6px;font-size:11px;text-align:right;"></div>
+          <div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:4px;">
+            <div style="font-size:12px;font-weight:800;color:var(--text);">₱207,000</div>
+          </div>
+          <div style="font-size:12px;font-weight:800;color:var(--text);">₱0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE NEW BUTTON -->
+    <button class="btn-review-damages" style="width:100%; background:var(--dark); color:var(--gold); border:1.5px solid var(--gold); border-radius:12px; padding:16px; font-weight:800; font-size:14px; margin-bottom:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
+      🔍 Review Damages & Losses
+    </button>
+
+    <!-- Balance Due + Buttons -->
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:stretch;">
+      <div style="background:rgba(196,154,60,0.06);border:1px solid rgba(196,154,60,0.2);border-radius:12px;padding:14px;flex:1;">
+        <div style="font-size:9px;font-weight:800;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Remaining Balance Due</div>
+        <div style="font-size:26px;font-weight:900;color:var(--text);">₱ 207,000</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+        <button style="flex:1;background:var(--green);color:#fff;border:none;border-radius:10px;padding:12px;font-size:12px;font-weight:800;cursor:pointer;">Sync with Billing Panel</button>
+        <button style="flex:1;background:transparent;border:2px solid var(--green);color:var(--green);border-radius:10px;padding:10px;font-size:11px;font-weight:700;cursor:pointer;">Open Payment Gateway</button>
+      </div>
+    </div>
+
+    <!-- Task Cards -->
+    <div class="task-card active-task">
+      <div class="task-card-name"><div class="task-chk done">✓</div>Count equipment</div>
+      <div class="task-btns"><span class="task-btn gold">📸</span><span class="task-btn gold">done</span><span class="task-btn">undo</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Pack equipment</div>
+      <div class="task-btns"><span class="task-btn">start</span><span class="task-btn">done</span></div>
+    </div>
+    <div class="task-card">
+      <div class="task-card-name"><div class="task-chk"></div>Clear venue</div>
+      <div class="task-btns"><span class="task-btn">continue</span><span class="task-btn">end</span></div>
+    </div>
+
+    <!-- Command Log -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;">📋 Command Log</div>
+    <div class="cmd-log">
+      <textarea class="cmd-textarea" placeholder="Write detailed fielding..."></textarea>
+      <button class="btn-log-field">+ Log Field Update</button>
+    </div>
+    <button class="session-timeline-btn" style="margin-bottom:14px;">⊙ Session Timeline</button>
+  </div>
+
+  <div class="bottom-phase-bar">
+    <div class="bpb-item"><div class="bpb-name">Departure</div><div class="bpb-time">03:00–05:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Deployment</div><div class="bpb-time">05:00–08:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Execution</div><div class="bpb-time">08:00–15:00</div></div>
+    <div class="bpb-item bpb-active"><div class="bpb-active-indicator"></div><div class="bpb-name">Bashout</div><div class="bpb-time">15:00–18:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Restorage</div><div class="bpb-time">16:00–17:00</div></div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- SCREEN 6: Restorage Phase -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 6 - Restorage Phase (Final)</div>
+
+<div class="screen" style="background:var(--bg);display:flex;flex-direction:column;">
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;"><div class="exec-live-dot"></div><span style="color:var(--green);font-size:9px;font-weight:800;">LIVE</span></div>
+    <div class="exec-event-name" style="font-size:10px;">robert's Event · 16:00 – 17:00</div>
+    <div style="display:flex;gap:6px;">
+      <button class="toggle-view-btn">⊞ Toggle View</button>
+      <button class="exec-end-btn">End Execution</button>
+    </div>
+  </div>
+  <div class="mini-map-side" style="height:120px;">
+    <div class="map-road-h" style="top:50%;"></div>
+    <div class="map-road-v" style="left:40%;"></div>
+    <div style="position:absolute;inset:0;background:rgba(26,16,7,0.2);"></div>
+    <div class="map-pin" style="right:30%;top:20%;background:var(--red);width:18px;height:18px;"><div class="map-pin-inner" style="font-size:8px;">📍</div></div>
+    <div style="position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;">
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">+</div>
+      <div style="background:rgba(26,16,7,0.8);border-radius:4px;padding:3px 8px;color:#fff;font-size:10px;font-weight:700;">–</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px 14px 0;">
+    <!-- Phase Header -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:9px;font-weight:800;color:var(--mid);letter-spacing:1px;text-transform:uppercase;">Current Operational Phase</div>
+      <div style="font-size:28px;font-weight:900;color:var(--text);font-family:'Playfair Display',serif;">RESTORAGE</div>
+      <div style="font-size:11px;color:var(--mid);margin-bottom:6px;">16:00 – 17:00</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:9px;color:var(--mid);">PHASE PROGRESS</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="background:rgba(39,174,96,0.12);color:var(--green);font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;">INACTIVE</span>
+          <span style="font-size:12px;font-weight:900;color:var(--text);">100%</span>
+        </div>
+      </div>
+      <div class="phase-progress-bar"><div class="phase-progress-fill ongoing" style="width:100%;"></div></div>
+    </div>
+
+    <!-- Final Phase Banner -->
+    <div style="background:rgba(39,174,96,0.06);border:1.5px solid rgba(39,174,96,0.25);border-radius:14px;padding:24px 16px;text-align:center;margin-bottom:16px;">
+      <div style="font-size:32px;margin-bottom:10px;">🏁</div>
+      <div style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:8px;">Final Phase: Restorage &amp; Cleanup</div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:16px;">Ensure all inventory is accounted for and transport is unloaded. Once done, mark the entire reservation as completed.</div>
+      <button style="background:#1a5e35;color:#fff;border:none;border-radius:10px;padding:14px 24px;font-size:13px;font-weight:800;cursor:pointer;width:100%;">Mark Reservation as Completed</button>
+    </div>
+
+    <!-- Task Cards (all done) -->
+    <div class="task-card active-task">
+      <div class="task-card-name"><div class="task-chk done">✓</div>Count equipment</div>
+      <div class="task-btns"><span class="task-btn gold">done</span></div>
+    </div>
+    <div class="task-card active-task">
+      <div class="task-card-name"><div class="task-chk done">✓</div>Unload transport</div>
+      <div class="task-btns"><span class="task-btn gold">start</span><span class="task-btn">complete</span><span class="task-btn">transfer</span><span class="task-btn">mark</span><span class="task-btn">end</span></div>
+    </div>
+    <div class="task-card active-task">
+      <div class="task-card-name"><div class="task-chk done">✓</div>Inventory check</div>
+      <div class="task-btns"><span class="task-btn gold">done</span></div>
+    </div>
+
+    <!-- Command Log -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;">📋 Command Log</div>
+    <div class="cmd-log">
+      <textarea class="cmd-textarea" placeholder="Write detailed fielding..."></textarea>
+      <button class="btn-log-field">+ Log Field Update</button>
+    </div>
+    <button class="session-timeline-btn" style="margin-bottom:14px;">⊙ Session Timeline</button>
+  </div>
+
+  <div class="bottom-phase-bar">
+    <div class="bpb-item"><div class="bpb-name">Departure</div><div class="bpb-time">03:00–05:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Deployment</div><div class="bpb-time">05:00–08:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Execution</div><div class="bpb-time">08:00–15:00</div></div>
+    <div class="bpb-item"><div class="bpb-name">Bashout</div><div class="bpb-time">15:00–18:00</div></div>
+    <div class="bpb-item bpb-active"><div class="bpb-active-indicator"></div><div class="bpb-name">Restorage</div><div class="bpb-time">16:00–17:00</div></div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- SCREEN 7: ADMIN LOGISTICS TOOLS -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 7 - Admin Logistics Tools</div>
+
+<div class="screen" style="background:var(--bg);display:flex;flex-direction:column;">
+  <div class="exec-topbar">
+    <div style="display:flex;align-items:center;gap:6px;"><div class="exec-live-dot" style="background:var(--gold);"></div><span style="color:var(--gold);font-size:9px;font-weight:800;">ADMIN</span></div>
+    <div class="exec-event-name" style="font-size:10px;">Bulk Management & Asset Edit</div>
+  </div>
+  
+  <div style="flex:1;overflow-y:auto;padding:20px;">
+    <!-- Bulk QR Lineup -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Bulk Items QR Code Lineup</div>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:32px;">
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">PLATES</div>
+      </div>
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">SPOONS</div>
+      </div>
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">FORKS</div>
+      </div>
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">SOUP BOWL</div>
+      </div>
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">GOBLETS</div>
+      </div>
+      <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🔳</div>
+        <div style="font-size:9px; font-weight:800; color:var(--dark);">GLASS</div>
+      </div>
+    </div>
+
+    <!-- Edit Equipment Asset (Dark Theme Modal Reproduction) -->
+    <div style="font-size:10px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Edit Equipment Asset</div>
+    <div style="background:#1a1007; border-radius:16px; padding:20px; border:1px solid rgba(255,255,255,0.1);">
+      <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+        <div style="font-size:14px; font-weight:800; color:#fff;">Edit Equipment Asset</div>
+        <div style="color:rgba(255,255,255,0.4);">&times;</div>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div>
+            <label style="font-size:8px; color:var(--gold); font-weight:800;">ASSET ID</label>
+            <input type="text" value="EQ-F001" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px; color:#fff; font-size:11px;">
+          </div>
+          <div>
+            <label style="font-size:8px; color:var(--gold); font-weight:800;">EQUIPMENT NAME</label>
+            <input type="text" value="Round Banquet Table 5ft" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px; color:#fff; font-size:11px;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div>
+            <label style="font-size:8px; color:var(--gold); font-weight:800;">QUANTITY</label>
+            <input type="text" value="20" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px; color:#fff; font-size:11px;">
+          </div>
+          <div>
+            <label style="font-size:8px; color:var(--gold); font-weight:800;">UNIT COST</label>
+            <input type="text" value="₱3500" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px; color:#fff; font-size:11px;">
+          </div>
+        </div>
+        <button style="background:var(--gold); color:var(--dark); border:none; padding:12px; border-radius:10px; font-size:12px; font-weight:800; margin-top:10px;">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- SCREEN 8: DAMAGES REVIEW MODAL -->
+<!-- ========================================================= -->
+
+<div style="height: 100vh;"></div>
+<div class="screen-label">Screen 8 - Damages Review Modal</div>
+
+<div class="screen" style="background:#1a1007; display:flex; flex-direction:column; color:#fff;">
+  <div style="padding:24px 20px; flex:1;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+      <h2 style="font-size:22px; font-weight:900; font-family:'Playfair Display', serif; color:var(--gold);">Damages Review</h2>
+      <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.4); text-transform:uppercase;">RES-7291</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <!-- Bulk Item Example -->
+      <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:16px; display:flex; gap:16px; align-items:center;">
+        <div style="width:50px; height:50px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px;">🍽️</div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700;">Ceramic Dinner Plates</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.5);">5 Broken • <span style="color:var(--gold); font-weight:800;">Total: ₱750</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button style="width:32px; height:32px; background:var(--green); border:none; border-radius:8px; color:#fff; font-weight:800;">✓</button>
+          <button style="width:32px; height:32px; background:var(--red); border:none; border-radius:8px; color:#fff; font-weight:800;">&times;</button>
+        </div>
+      </div>
+
+      <!-- Individual Item Example -->
+      <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:16px; display:flex; gap:16px; align-items:center;">
+        <div style="width:50px; height:50px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px;">🛋️</div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700;">Tiffany Crossback Chair</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.5);"><span style="color:var(--gold); font-weight:800;">Price: ₱500</span></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button style="width:32px; height:32px; background:var(--green); border:none; border-radius:8px; color:#fff; font-weight:800;">✓</button>
+          <button style="width:32px; height:32px; background:var(--red); border:none; border-radius:8px; color:#fff; font-weight:800;">&times;</button>
+        </div>
+      </div>
+
+      <!-- Evidence Placeholder -->
+      <div style="margin-top:8px;">
+        <div style="font-size:9px; font-weight:800; color:var(--gold); letter-spacing:1px; margin-bottom:8px;">EVIDENCE PHOTO</div>
+        <div style="width:100%; height:120px; background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.2); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+          <div style="font-size:24px;">📸</div>
+          <div style="font-size:10px; color:rgba(255,255,255,0.4);">No image uploaded</div>
+        </div>
+      </div>
+    </div>
+    
+    <button style="width:100%; background:var(--gold); color:var(--dark); border:none; padding:16px; border-radius:12px; font-weight:800; font-size:14px; margin-top:32px; cursor:pointer;">Finalize Assessment</button>
+  </div>
+</div>
+
+</body>
+</html>
